@@ -1,12 +1,14 @@
 package com.onyxlib.ImageProcessing;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Path;
 
 import com.onyxlib.ImageProcessing.ImageFilters.*;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import javax.imageio.ImageIO;
 
@@ -104,33 +106,31 @@ public class ImageProcessing {
 		return true;
 	}
 
-	public void writeImagesToDirectory(BufferedImage[] images, String directory, String format, String generalName, String discriminator) throws IOException {
+	public void writeImagesToDirectory(BufferedImage[] images, String directory, String format, String generalName) throws IOException {
+		String discriminator = null;
+		int i = 0;
 		for (BufferedImage x : images) {
-			if(x == null) {
-				System.exit(1);
-				ImageIO.write(x, format, new File(directory+=generalName+=discriminator));
-			}
-			System.out.println("ImageData: "+x);
+			String path = directory +
+					generalName +
+					"_" +
+					i +
+					format;
+				if(x == null) {
+					break;
+				}
+			ImageIO.write(x,"png",new File(path));
+
+			i++;
 
 		}
 	}
 
 	// FIXME: 12.04.2020 THIS IS STACKOVERFLOW CODE  MAKE YOUR OWN SOLUTION
-	public BufferedImage bufferedImageFromMat(Mat in, int x, int y) {
-		BufferedImage out;
-		byte[] data = new byte[x * y * (int)in.elemSize()];
-		int type;
-		in.get(0, 0, data);
-
-		if(in.channels() == 1)
-			type = BufferedImage.TYPE_BYTE_GRAY;
-		else
-			type = BufferedImage.TYPE_3BYTE_BGR;
-
-		out = new BufferedImage(320, 240, type);
-
-		out.getRaster().setDataElements(0, 0, 320, 240, data);
-		return out;
+	public BufferedImage bufferedImageFromMat(Mat in) throws IOException {
+		System.out.println("Converted Matrix to Image");
+		MatOfByte mob=new MatOfByte();
+		Imgcodecs.imencode(".png", in, mob);
+		return ImageIO.read(new ByteArrayInputStream(mob.toArray()));
 	}
 	
 }

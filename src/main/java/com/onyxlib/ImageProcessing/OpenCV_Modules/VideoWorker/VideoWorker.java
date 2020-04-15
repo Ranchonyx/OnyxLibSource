@@ -30,7 +30,8 @@ static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
             int frameNumber = 0;
             while (vcap.read(currentFrame)) {
                 frames[frameNumber] = currentFrame;
-                System.out.println("Framenum: " + frameNumber + " , frameValue " + frames[frameNumber]);
+                currentFrame = new Mat();
+                System.out.println("Frame Number: " + frameNumber + " , Frame Value " + frames[frameNumber]);
                 frameNumber++;
 
             }
@@ -39,14 +40,20 @@ static {System.loadLibrary(Core.NATIVE_LIBRARY_NAME);}
 
 
     }
-    public void writeFrames(String dir, String generalName, String discriminator, int x, int y) throws IOException {
+    public void writeFrames(String dir, String generalName) throws IOException {
         ImageProcessing imgp = new ImageProcessing();
         BufferedImage[] imageFrames = new BufferedImage[frames.length-1];
         for(int i = 0; i < frames.length-1; i++) {
-            System.out.println("yeet "+frames[i]);
-            imageFrames[i] = imgp.bufferedImageFromMat(frames[i], x, y);
+            if(frames[i] == null) {
+                break;
+            }
+            imageFrames[i] = imgp.bufferedImageFromMat(frames[i]);
         }
-        imgp.writeImagesToDirectory(imageFrames, dir,"png",generalName,discriminator);
+
+
+
+        System.out.println("Writing files to disk...");
+        imgp.writeImagesToDirectory(imageFrames, dir,".png",generalName);
     }
     public Mat[] getFrames() {
         return this.frames;

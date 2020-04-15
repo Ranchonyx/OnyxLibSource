@@ -1,18 +1,14 @@
-import com.onyxlib.ImageProcessing.OpenCV_Modules.FeatureDetection.FeatureDetection;
-
+import com.onyxlib.ImageProcessing.OpenCV_Modules.VideoWorker.VideoWorker;
 import java.io.File;
 import java.io.IOException;
 
 class Yes {
     public static void main(String[] args) throws IOException {
 
-        FeatureDetection fd = new FeatureDetection();
+        VideoWorker vw = new VideoWorker();
 
-        fd.setOutputPath("D:\\meh\\outImage.png");
-        fd.loadCascade("D:\\meh\\haarcascade_frontalface_alt.xml");
-        fd.loadImage(new File("D:\\meh\\downloadedImage.jpg"));
-        fd.detectFeatures();
-        fd.writeFilewithImage();
+        vw.extractFrames(new File("D:\\meh\\video\\vid.mkv"));
+        vw.writeFrames("D:\\meh\\video\\", "frameCap");
 
     }
 }
